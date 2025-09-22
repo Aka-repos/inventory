@@ -28,13 +28,11 @@ export default function LoginForm() {
     setErr(null);
     setLoading(true);
 
-    const { error } = await supa.auth.signInWithPassword({
-      email,
-      password: pass,
-    });
+  const { data, error } = await supa.auth.signInWithPassword({ email, password: pass });
 
     setLoading(false);
 
+    // ...
     if (error) {
       // Mensajes más amigables
       if (error.message.toLowerCase().includes("invalid login")) {
@@ -44,8 +42,22 @@ export default function LoginForm() {
       }
       return;
     }
+    const session = data.session ?? (await supa.auth.getSession()).data.session;
+if (session) {
+  await fetch("/api/auth/set", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "same-origin",
+    body: JSON.stringify({
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+    }),
+  });
+}
 
-    r.replace("/(user)/orders");
+  
+    r.replace("/login")
+
   }
 
   return (

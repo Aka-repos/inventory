@@ -1,5 +1,5 @@
 // src/app/admin/orders/page.tsx
-import { supabaseServer } from "@/app/actions/supabase-server"
+import { supabaseServer } from "@/app/actions/supabase-server";
 import { setOrderStatus } from "./server";
 
 export default async function AdminOrdersPage() {

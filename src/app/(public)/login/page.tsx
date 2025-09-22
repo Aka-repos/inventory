@@ -7,7 +7,17 @@ export const metadata = { title: "Iniciar sesión" };
 export default async function LoginPage() {
   const supa = await supabaseServer();
   const { data: { user } } = await supa.auth.getUser();
-  if (user) redirect("/(user)/orders");
+  if (user)  {
+    // Lee el rol desde tu tabla de perfiles
+    const { data: profile } = await supa
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    
+    const role = (profile?.role as "admin" | "user") ?? "user";
+    redirect(role === "admin" ? "/admin/orders" : "/orders");
+  }
 
   return (
     <main
